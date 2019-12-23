@@ -3,13 +3,10 @@
 // Licensed under the MIT license.
 //
 const crypto = require('crypto');
-// const sharedSecret = "TSb86O2Se7f+OxwJBj8x/ht57/Lmv09EWHYMbjS4qck="; // e.g. "+ZaRRMC8+mpnfGaGsBOmkIFt98bttL5YQRq3p2tXgcE="
-const sharedSecret = "m2Dcmedw8sCea9YwNrdRlNOBGsLDsxEd5wb81QmG5/E="; // e.g. "+ZaRRMC8+mpnfGaGsBOmkIFt98bttL5YQRq3p2tXgcE="
+const sharedSecret = "tjHPf+AOkaGzKBiXhvvrGoQNueUf9C1+IRTjatlNRrA=";
 const bufSecret = Buffer(sharedSecret, "base64");
-var fs = require('fs');
 
 // メンバー、製品情報
-
 var members = [
 	"kysato",
 	"ishiyam",
@@ -49,7 +46,7 @@ var networkProducts = [
 	"other",
 ];
 
-// Azure SQL Database への接続
+// Connect: Azure SQL Database
 const Connection = require('tedious').Connection;
 const Request = require('tedious').Request;
 
@@ -57,16 +54,15 @@ var config =
 {
 	authentication: {
 		options: {
-			userName: 'testvm01', // update me
-			password: 'hogeAdmin01!' // update me
+			userName: 'testvm01',
+			password: 'hogeAdmin01!'
 		},
 		type: 'default'
 	},
-	// server: 'anp-bot-tayamasa01.database.windows.net', // update me
-	server: 'tayamasa-anp-bot-db.database.windows.net', // update me
+	server: 'tayamasa-anp-bot-db.database.windows.net',
 	options:
 	{
-		database: 'anp-bot-db', //update me
+		database: 'anp-bot-db',
 		encrypt: true
 	}
 }
@@ -98,7 +94,7 @@ http.createServer(function(request, response) {
 			response.writeHead(200);
 			if (msgHash === auth) {
 
-				// 文字列調整
+				// Validation the inputed date
 				var receivedMsg = JSON.parse(payload);
 				var textArray = receivedMsg.text.split(' ').filter(Boolean);
 				for(let i = 0; i < textArray.length; i++) {
@@ -132,21 +128,13 @@ http.createServer(function(request, response) {
 						break;
 					}
 
-					// const connection = new Connection(config);
-					// connection.on('connect', function(err) {
-					// 	if ( err ) {
-					// 		process.exit();
-					// 	}
-					// 	executeSql("count", srNum);
-					// });
-					
 					if (members.indexOf(member) == -1) {
 						var responseMsg = '{ "type": "message", "text": "Please check the inputed name." }';
 						break;
 					}
 		
 					if (networkProducts.indexOf(product) == -1) {
-						var responseMsg = '{ "type": "message", "text": "Please choose in LB, APPGW, VPNGW, VWAN, TM, FD, VNET, FW, NSG, ER, DNS, CDN, NW, PUBLICIP, DDOS, PRIVATELINK, BASTION, NVA, OTHER." }';
+						var responseMsg = '{ "type": "message", "text": "Please choose in  ' + networkProducts.join(', ') + '." }';
 						break;
 					}
 		
@@ -181,6 +169,7 @@ http.createServer(function(request, response) {
 							});
 							connection.execSql(request);
 						});
+
 						var resultMsg = "ADD: {name: " + member + ", product: " + product + ", contract: " + isPremier + " }";
 						var responseMsg = '{ "type": "message", "text": "' + resultMsg + '" }';
 						break;
@@ -237,46 +226,5 @@ http.createServer(function(request, response) {
 	});
 		
 }).listen(PORT);
-
-function executeSql(type, sr = null) {
-	// Query Request
-	// console.log(type);
-	// console.log(sr);
-    let sql = getQuery(type, sr);
-    const request = new Request(sql, function(err, rows) {
-        if ( err ) {
-            process.exit();
-        }
-        connection.close();
-    });
-    // request.on('row', function(columns) {
-	// 	// 実行結果が返ってくる
-	// 	console.log(columns);
-	// })
-	request.on('row', function(columns) {
-		columns.forEach(function(column) {
-		    if (column.value === null) {
-			    console.log('NULL');
-		    } else {
-				console.log(column.value);
-		  	}
-		});
-	});
-
-	connection.execSql(request);
-}
-
-function getQuery(type, sr = null, name = null) {
-	// console.log(type);
-	// console.log(sr);
-
-	switch (type) {
-		case "select":
-			var sql = "SELECT * FROM assign where name = 'tayamasa'";
-		case "count":
-			var sql = "SELECT COUNT (sr) FROM assign where sr = '" + sr + "'";
-	}
-    return sql;
-}
 
 console.log('Listening on port %s', PORT);
