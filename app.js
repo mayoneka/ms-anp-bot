@@ -233,6 +233,11 @@ http.createServer(function(request, response) {
 						break;
 		
 					}
+
+					case 'show': 
+					var resultMsg = "<a href\=\\\"https\:\/\/msit.powerbi.com\/groups\/3e65b7f1-ae65-4bb9-9059-b8b50652deb4\/reports\/a44bc08b-d0d0-49fb-8b6d-d2d196fa128f\/ReportSection\\\">assign tool<\/a>"
+					var responseMsg = '{ "type": "message", "text": "' + resultMsg + '" }';
+					break;
 		
 					case 'help':
 					default:
