@@ -3,7 +3,7 @@
 // Licensed under the MIT license.
 //
 const crypto = require('crypto');
-const sharedSecret = "tjHPf+AOkaGzKBiXhvvrGoQNueUf9C1+IRTjatlNRrA=";
+const sharedSecret = "g8+DG5Mkf0UzfWCc9RA1QRezs4QdR4qChxhj1ReB/bM=";
 const bufSecret = Buffer(sharedSecret, "base64");
 
 // メンバー、製品情報
@@ -40,11 +40,38 @@ var networkProducts = [
 	"nw",
 	"publicip",
 	"ddos",
-	"privatelink",
+	"pl",
 	"bastion",
 	"nva",
 	"other",
 ];
+
+var expMsg = `
+---
+<b>Products<\/b> \n\n
+\\\"lb\\\" : Load Balancer\n\n
+\\\"appgw\\\" : Application Gateway \n\n
+\\\"vpngw\\\" : VPN Gateway \n\n
+\\\"vwan\\\" : Virtual WAN\n\n
+\\\"tm\\\" : Traffic Manager\n\n
+\\\"fd\\\" : Front Door\n\n
+\\\"vnet\\\" : Virtual Network \n\n
+\\\"fw\\\" : Azure Firewall\n\n
+\\\"nsg\\\" : Network Security Group\n\n
+\\\"er\\\" : ExpressRoute\n\n
+\\\"dns\\\" : Azure DNS\n\n
+\\\"cdn\\\" : Azure CDN\n\n
+\\\"nw\\\" : Network Watcher\n\n
+\\\"publicip\\\" : Public IP Address\n\n
+\\\"ddos\\\" : DDOS Protection\n\n
+\\\"pl\\\" : Private Link\n\n
+\\\"bastion\\\" : Azure Bastion\n\n
+\\\"nva\\\" : NVA\n\n
+\\\"other\\\" : Others\n\n
+---
+`;
+
+
 
 // Connect: Azure SQL Database
 const Connection = require('tedious').Connection;
@@ -54,15 +81,15 @@ var config =
 {
 	authentication: {
 		options: {
-			userName: 'testvm01',
-			password: 'hogeAdmin01!'
+			userName: 'mayoneka',
+			password: 'ZAQ!2wsxCDE#'
 		},
 		type: 'default'
 	},
-	server: 'tayamasa-anp-bot-db.database.windows.net',
+	server: 'mayoneka-bot-db.database.windows.net',
 	options:
 	{
-		database: 'anp-bot-db',
+		database: 'mayoneka-bot-db',
 		encrypt: true
 	}
 }
@@ -100,7 +127,7 @@ http.createServer(function(request, response) {
 				for(let i = 0; i < textArray.length; i++) {
 					textArray[i] = textArray[i].replace(/\r?\n/g, '');
 					textArray[i] = textArray[i].replace('&nbsp;', '');
-					textArray[i] = textArray[i].replace('<at>z-anp-bot</at>', '');
+					textArray[i] = textArray[i].replace('<at>mayoneka-bot3</at>', '');
 					textArray[i] = textArray[i].replace('<div', '');
 					textArray[i] = textArray[i].replace('itemprop="copy-paste-block">', '');
 					textArray[i] = textArray[i].replace('<at>', '');
@@ -209,7 +236,8 @@ http.createServer(function(request, response) {
 		
 					case 'help':
 					default:
-					var responseMsg = '{ "type": "message", "text": "ex.) assign [SR num] [Alias] [Product] [BC/Premier] [add/del]" }';
+					var str = "ex.) assign [SR num] [Alias] [Product] [BC/Premier] [add/del]"
+					var responseMsg = '{ "type": "message", "text": "' + str + '\n\n' + expMsg + '"}'
 					break;					
 				}
 
