@@ -110,7 +110,7 @@ http.createServer(function(request, response) {
 	});
 	
 	// Respond to the request
-	request.on('end', function() {
+	request.on('end', async function() {
 		try {
 			// Retrieve authorization HMAC information
 			var auth = this.headers['authorization'];
@@ -173,6 +173,8 @@ http.createServer(function(request, response) {
 					}
 		
 					if (operate == 'add') {
+						var resultMsg= "ADD: {name: " + member + ", product: " + product + ", contract: " + isPremier + " }";
+						var responseMsg = '{ "type": "message", "text": "' + resultMsg + '" }';
 						const connection = new Connection(config);
 						connection.on('connect', function(err) {
 							if ( err ) {
@@ -189,18 +191,24 @@ http.createServer(function(request, response) {
 								if ( err ) {
 									// ERROR - Query request error.
 									console.log('Query request error.(' + err + '');
+									resultMsg = "SR is already assigned.";
+									responseMsg = '{ "type": "message", "text": "' + resultMsg + '" }';
+									
 									// process.exit();
-								}
+								}else{
 								// INFO - Run query. sql
-								console.log('Run query. ' + sql);
-							   　// close
+									resultMsg = "ADD: {name: " + member + ", product: " + product + ", contract: " + isPremier + " }";
+									responseMsg = '{ "type": "message", "text": "' + resultMsg + '" }';
+									console.log('Run query. ' + sql);
+								}
+								response.write(responseMsg);
+								response.end();　
+								// close
 								connection.close();
 							});
 							connection.execSql(request);
 						});
 
-						var resultMsg = "ADD: {name: " + member + ", product: " + product + ", contract: " + isPremier + " }";
-						var responseMsg = '{ "type": "message", "text": "' + resultMsg + '" }';
 						break;
 		 
 					} else if (operate == 'del') {
@@ -224,7 +232,10 @@ http.createServer(function(request, response) {
 								}
 								// INFO - Run query. sql
 								console.log('Run query. ' + sql);
-							   　// close
+								response.write(responseMsg);
+								response.end();　
+
+								// close
 								connection.close();
 							});
 							connection.execSql(request);
@@ -251,8 +262,6 @@ http.createServer(function(request, response) {
 			} else {
 				var responseMsg = '{ "type": "message", "text": "Error: message sender cannot be authenticated." }';
 			}
-			response.write(responseMsg);
-			response.end();
 		}
 		catch (err) {
 			response.writeHead(400);
