@@ -43,7 +43,6 @@ var networkProducts = [
 	"pl",
 	"bastion",
 	"nva",
-	"natgw",
 	"other",
 ];
 
@@ -68,7 +67,6 @@ var expMsg = `
 \\\"pl\\\" : Private Link\n\n
 \\\"bastion\\\" : Azure Bastion\n\n
 \\\"nva\\\" : NVA\n\n
-\\\"natgw\\\" : NAT Gateway (NAT Service)\n\n
 \\\"other\\\" : Others\n\n
 ---
 `;
